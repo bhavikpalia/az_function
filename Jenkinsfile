@@ -18,35 +18,41 @@ pipeline {
             }
         }
 
+        stage('Install .NET SDK') {
+            steps {
+                bat '''
+                    powershell -command "Invoke-WebRequest https://dot.net/v1/dotnet-install.ps1 -OutFile dotnet-install.ps1"
+                    powershell -command "./dotnet-install.ps1 -Channel 6.0"
+                '''
+            }
+        }
+
         stage('Restore Dependencies') {
             steps {
-                script {
-                    dotnetSdk(dotnetVersion: "${env.DOTNET_VERSION}")
-                }
-                sh 'dotnet restore'
+                bat 'dotnet restore'
             }
         }
 
         stage('Build') {
             steps {
-                sh 'dotnet build --configuration Release'
+                bat 'dotnet build --configuration Release'
             }
         }
 
         stage('Publish') {
             steps {
-                sh 'dotnet publish --configuration Release --output publish_output'
+                bat 'dotnet publish --configuration Release --output publish_output'
             }
         }
 
         stage('Deploy to Azure') {
             steps {
-                        sh """
-                            az functionapp deployment source config-zip -g $RESOURCE_GROUP -n $FUNCTION_APP_NAME --src publish_output.zip
-                        """
-                    }
-                }
-     }
+                bat '''
+                    az functionapp deployment source config-zip -g %RESOURCE_GROUP% -n %FUNCTION_APP_NAME% --src publish_output.zip
+                '''
+            }
+        }
+    }
 
     post {
         success {
