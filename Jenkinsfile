@@ -13,7 +13,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 git branch: 'main', 
-                    url: 'https://github.com/bhavikpalia/AZ_fucntionApp.git',
+                    url: 'https://github.com/bhavikpalia/az_function.git',
                     credentialsId: 'github-PAT'
             }
         }
