@@ -41,16 +41,12 @@ pipeline {
 
         stage('Deploy to Azure') {
             steps {
-                azureCLI {
-                    script {
                         sh """
                             az functionapp deployment source config-zip -g $RESOURCE_GROUP -n $FUNCTION_APP_NAME --src publish_output.zip
                         """
                     }
                 }
-            }
-        }
-    }
+     }
 
     post {
         success {
